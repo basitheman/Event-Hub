@@ -1,0 +1,55 @@
+<div class="container container--narrow">
+  <div class="page-header page-header--inline">
+    <a href="/registrations" class="back-link">← Change Email</a>
+    <div>
+      <h1 class="page-header__title">My Bookings</h1>
+      <p class="page-header__sub"><%= email %></p>
+    </div>
+  </div>
+
+  <% if (registrations.length === 0) { %>
+    <div class="empty-state">
+      <div class="empty-state__icon">◈</div>
+      <h3>No bookings found</h3>
+      <p>No registrations found for <strong><%= email %></strong>. <a href="/events">Browse events</a> to get started.</p>
+    </div>
+  <% } else { %>
+    <div class="bookings-list">
+      <% registrations.forEach(r => { %>
+        <div class="booking-card <%= r.status === 'cancelled' ? 'booking-card--cancelled' : '' %> <%= r.is_cancelled ? 'booking-card--event-cancelled' : '' %>">
+          <div class="booking-card__left">
+            <span class="badge badge--<%= r.category %>"><%= r.category %></span>
+            <h3 class="booking-card__title">
+              <a href="/events/<%= r.event_id %>"><%= r.event_title %></a>
+            </h3>
+            <div class="booking-card__meta">
+              <span>📅 <%= new Date(r.event_date).toLocaleDateString('en-GB', { weekday:'short', day:'numeric', month:'short', year:'numeric' }) %></span>
+              <span>📍 <%= r.location %></span>
+              <span>🎟 <%= r.ticket_count %> ticket<%= r.ticket_count > 1 ? 's' : '' %></span>
+              <% if (Number(r.price) > 0) { %>
+                <span>💶 €<%= (Number(r.price) * r.ticket_count).toFixed(2) %> total</span>
+              <% } else { %>
+                <span>Free</span>
+              <% } %>
+            </div>
+          </div>
+          <div class="booking-card__right">
+            <% if (r.is_cancelled) { %>
+              <span class="badge badge--cancelled">Event Cancelled</span>
+            <% } else if (r.status === 'cancelled') { %>
+              <span class="badge badge--cancelled">Cancelled</span>
+            <% } else { %>
+              <span class="badge badge--confirmed">Confirmed</span>
+              <form action="/registrations/<%= r.id %>?_method=DELETE" method="POST"
+                    onsubmit="return confirm('Cancel this registration?')">
+                <input type="hidden" name="email" value="<%= email %>" />
+                <button type="submit" class="btn btn--sm btn--danger">Cancel</button>
+              </form>
+            <% } %>
+          </div>
+        </div>
+      <% }) %>
+    </div>
+  <% } %>
+</div>
+
