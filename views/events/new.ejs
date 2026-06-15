@@ -1,0 +1,76 @@
+<div class="container container--narrow">
+  <div class="page-header page-header--inline">
+    <a href="/events" class="back-link">← Back</a>
+    <h1 class="page-header__title">Create New Event</h1>
+  </div>
+
+  <% if (errors.length > 0) { %>
+    <div class="error-list">
+      <% errors.forEach(e => { %><p>× <%= e.msg %></p><% }) %>
+    </div>
+  <% } %>
+
+  <form action="/events" method="POST" class="form form--card" novalidate>
+    <div class="form__section">
+      <h2 class="form__section-title">Event Details</h2>
+      <div class="form__group">
+        <label class="label" for="title">Event Title <span class="label__req">*</span></label>
+        <input type="text" id="title" name="title" class="input" value="<%= old.title || '' %>" required placeholder="e.g. Annual Tech Summit 2025" />
+      </div>
+      <div class="form__group">
+        <label class="label" for="description">Description</label>
+        <textarea id="description" name="description" class="input input--textarea" rows="4" placeholder="Tell attendees what to expect…"><%= old.description || '' %></textarea>
+      </div>
+      <div class="form__row">
+        <div class="form__group">
+          <label class="label" for="category">Category <span class="label__req">*</span></label>
+          <select id="category" name="category" class="select">
+            <option value="">Select a category</option>
+            <% categories.forEach(cat => { %>
+              <option value="<%= cat %>" <%= old.category === cat ? 'selected' : '' %>><%= cat.charAt(0).toUpperCase() + cat.slice(1) %></option>
+            <% }) %>
+          </select>
+        </div>
+        <div class="form__group">
+          <label class="label" for="organizer">Organizer <span class="label__req">*</span></label>
+          <input type="text" id="organizer" name="organizer" class="input" value="<%= old.organizer || '' %>" required placeholder="Your name or org" />
+        </div>
+      </div>
+    </div>
+
+    <div class="form__section">
+      <h2 class="form__section-title">When & Where</h2>
+      <div class="form__row">
+        <div class="form__group">
+          <label class="label" for="event_date">Date & Time <span class="label__req">*</span></label>
+          <input type="datetime-local" id="event_date" name="event_date" class="input"
+            value="<%= old.event_date ? new Date(old.event_date).toISOString().slice(0,16) : '' %>" required />
+        </div>
+        <div class="form__group">
+          <label class="label" for="location">Location <span class="label__req">*</span></label>
+          <input type="text" id="location" name="location" class="input" value="<%= old.location || '' %>" required placeholder="Venue, City" />
+        </div>
+      </div>
+    </div>
+
+    <div class="form__section">
+      <h2 class="form__section-title">Capacity & Pricing</h2>
+      <div class="form__row">
+        <div class="form__group">
+          <label class="label" for="capacity">Max Capacity <span class="label__req">*</span></label>
+          <input type="number" id="capacity" name="capacity" class="input" value="<%= old.capacity || 50 %>" required min="1" />
+        </div>
+        <div class="form__group">
+          <label class="label" for="price">Ticket Price (€) <span class="label__req">*</span></label>
+          <input type="number" id="price" name="price" class="input" value="<%= old.price || 0 %>" required min="0" step="0.01" placeholder="0 for free" />
+        </div>
+      </div>
+    </div>
+
+    <div class="form__actions">
+      <a href="/events" class="btn btn--ghost">Cancel</a>
+      <button type="submit" class="btn btn--primary">Publish Event</button>
+    </div>
+  </form>
+</div>
+
