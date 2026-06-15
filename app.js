@@ -29,6 +29,10 @@ app.use(session({
   cookie: { maxAge: 2 * 60 * 60 * 1000 }
 }));
 
+app.use((req, res, next) => {
+  res.locals.currentPath = req.path;
+  next();
+});
 
 app.use('/', homeRouter);
 app.use('/events', eventsRouter);

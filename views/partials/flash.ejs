@@ -1,0 +1,16 @@
+<% if (typeof success !== 'undefined' && success && success.length > 0) { %>
+  <div class="flash flash--success">
+    <span class="flash__icon">✓</span>
+    <%= success[0] %>
+    <button class="flash__close" onclick="this.parentElement.remove()">×</button>
+  </div>
+<% } %>
+
+<% if (typeof error !== 'undefined' && error && error.length > 0) { %>
+  <div class="flash flash--error">
+    <span class="flash__icon">!</span>
+    <%= error[0] %>
+    <button class="flash__close" onclick="this.parentElement.remove()">×</button>
+  </div>
+<% } %>
+
