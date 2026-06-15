@@ -34,7 +34,7 @@ app.use('/events', eventsRouter);
 app.use('/registrations', registrationsRouter);
 
 app.use((req, res) => {
-  res.status(404).send('Page not found');
+  res.status(404).render('404', { title: 'Page Not Found' });
 });
 
 app.use((err, req, res, next) => {

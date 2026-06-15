@@ -1,0 +1,40 @@
+<article class="card <%= event.is_cancelled ? 'card--cancelled' : '' %>">
+  <div class="card__category-bar card__category-bar--<%= event.category %>"></div>
+  <div class="card__body">
+    <div class="card__meta">
+      <span class="badge badge--<%= event.category %>"><%= event.category %></span>
+      <% if (event.is_cancelled) { %>
+        <span class="badge badge--cancelled">Cancelled</span>
+      <% } %>
+    </div>
+    <h3 class="card__title">
+      <a href="/events/<%= event.id %>"><%= event.title %></a>
+    </h3>
+    <div class="card__details">
+      <span class="card__detail">
+        <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0a6 6 0 100 12A6 6 0 008 0zm0 1a5 5 0 110 10A5 5 0 018 1zm.5 2.5h-1V8l4.3 2.5.5-.9L8.5 7.3V3.5z"/></svg>
+        <%= new Date(event.event_date).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' }) %>
+      </span>
+      <span class="card__detail">
+        <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C5.2 0 3 2.2 3 5c0 3.9 5 11 5 11s5-7.1 5-11c0-2.8-2.2-5-5-5zm0 7a2 2 0 110-4 2 2 0 010 4z"/></svg>
+        <%= event.location %>
+      </span>
+    </div>
+    <div class="card__footer">
+      <span class="card__price">
+        <%= Number(event.price) === 0 ? 'Free' : `€${Number(event.price).toFixed(2)}` %>
+      </span>
+      <span class="card__spots">
+        <% const spots = event.capacity - Number(event.tickets_sold); %>
+        <% if (spots <= 0) { %>
+          <span class="spots--full">Sold out</span>
+        <% } else if (spots <= 10) { %>
+          <span class="spots--low"><%= spots %> left</span>
+        <% } else { %>
+          <span class="spots--ok"><%= spots %> spots</span>
+        <% } %>
+      </span>
+    </div>
+  </div>
+</article>
+
