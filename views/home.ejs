@@ -1,0 +1,72 @@
+<!-- Hero -->
+<section class="hero">
+  <div class="hero__bg-text" aria-hidden="true">EVENTS</div>
+  <div class="hero__content">
+    <p class="hero__eyebrow">Discover · Book · Experience</p>
+    <h1 class="hero__title">Where every<br/><em>moment</em> begins.</h1>
+    <p class="hero__sub">From tech conferences to jazz nights — find the events that move you, and the seats that bring you closer.</p>
+    <div class="hero__actions">
+      <a href="/events" class="btn btn--primary btn--lg">Browse Events</a>
+      <a href="/events/new" class="btn btn--ghost btn--lg">Host an Event</a>
+    </div>
+  </div>
+  <div class="hero__stats">
+    <div class="hero__stat">
+      <span class="hero__stat-num"><%= stats.total_events || '0' %></span>
+      <span class="hero__stat-label">Active Events</span>
+    </div>
+    <div class="hero__stat">
+      <span class="hero__stat-num"><%= stats.total_attendees || '0' %></span>
+      <span class="hero__stat-label">Attendees</span>
+    </div>
+    <div class="hero__stat">
+      <span class="hero__stat-num"><%= stats.total_registrations || '0' %></span>
+      <span class="hero__stat-label">Bookings</span>
+    </div>
+  </div>
+</section>
+
+<!-- Featured Events -->
+<section class="section">
+  <div class="container">
+    <div class="section__header">
+      <h2 class="section__title">Coming Up</h2>
+      <a href="/events" class="section__link">View all →</a>
+    </div>
+
+    <% if (featured.length === 0) { %>
+      <div class="empty-state">
+        <p>No upcoming events yet. <a href="/events/new">Create the first one.</a></p>
+      </div>
+    <% } else { %>
+      <div class="card-grid">
+        <% featured.forEach(event => { %>
+          <%- include('partials/event-card', { event }) %>
+        <% }) %>
+      </div>
+    <% } %>
+  </div>
+</section>
+
+<!-- Categories -->
+<section class="section section--dark">
+  <div class="container">
+    <h2 class="section__title">What are you into?</h2>
+    <div class="category-grid">
+      <% [
+        { slug: 'technology', label: 'Technology', icon: '⬡' },
+        { slug: 'music', label: 'Music', icon: '♩' },
+        { slug: 'business', label: 'Business', icon: '◇' },
+        { slug: 'workshop', label: 'Workshops', icon: '△' },
+        { slug: 'food', label: 'Food & Drink', icon: '◎' },
+        { slug: 'arts', label: 'Arts', icon: '◻' },
+      ].forEach(cat => { %>
+        <a href="/events?category=<%= cat.slug %>" class="category-card">
+          <span class="category-card__icon"><%= cat.icon %></span>
+          <span class="category-card__label"><%= cat.label %></span>
+        </a>
+      <% }) %>
+    </div>
+  </div>
+</section>
+
