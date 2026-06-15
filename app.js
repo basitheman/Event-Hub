@@ -4,6 +4,7 @@ const session = require('express-session');
 const methodOverride = require('method-override');
 const expressLayouts = require('express-ejs-layouts');
 const path = require('path');
+
 const app = express();
 
 const homeRouter = require('./routes/home');
@@ -37,9 +38,10 @@ app.use((req, res) => {
   res.status(404).render('404', { title: 'Page Not Found' });
 });
 
+
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).send('Server error: ' + err.message);
+  res.status(500).render('error', { title: 'Server Error', message: err.message });
 });
 
 const PORT = process.env.PORT || 3000;
