@@ -1,0 +1,59 @@
+<div class="page-header">
+  <div class="container">
+    <h1 class="page-header__title">Browse Events</h1>
+    <p class="page-header__sub">Find your next unforgettable experience.</p>
+  </div>
+</div>
+
+<div class="container">
+  <!-- Filters -->
+  <form class="filters" method="GET" action="/events">
+    <div class="filters__search">
+      <input
+        type="text"
+        name="search"
+        class="input"
+        placeholder="Search by name, location, or organizer…"
+        value="<%= search %>"
+      />
+    </div>
+    <div class="filters__row">
+      <select name="category" class="select">
+        <option value="all" <%= selectedCategory === 'all' ? 'selected' : '' %>>All Categories</option>
+        <% categories.forEach(cat => { %>
+          <option value="<%= cat %>" <%= selectedCategory === cat ? 'selected' : '' %>><%= cat.charAt(0).toUpperCase() + cat.slice(1) %></option>
+        <% }) %>
+      </select>
+      <select name="sort" class="select">
+        <option value="date" <%= selectedSort === 'date' ? 'selected' : '' %>>Soonest First</option>
+        <option value="popular" <%= selectedSort === 'popular' ? 'selected' : '' %>>Most Popular</option>
+        <option value="price_asc" <%= selectedSort === 'price_asc' ? 'selected' : '' %>>Price: Low → High</option>
+        <option value="price_desc" <%= selectedSort === 'price_desc' ? 'selected' : '' %>>Price: High → Low</option>
+      </select>
+      <button type="submit" class="btn btn--primary">Filter</button>
+      <% if (search || selectedCategory !== 'all') { %>
+        <a href="/events" class="btn btn--ghost">Clear</a>
+      <% } %>
+    </div>
+  </form>
+
+  <!-- Results -->
+  <div class="results-meta">
+    <span><%= events.length %> event<%= events.length !== 1 ? 's' : '' %> found</span>
+  </div>
+
+  <% if (events.length === 0) { %>
+    <div class="empty-state empty-state--lg">
+      <div class="empty-state__icon">◈</div>
+      <h3>No events found</h3>
+      <p>Try adjusting your filters or <a href="/events/new">create the first one</a>.</p>
+    </div>
+  <% } else { %>
+    <div class="card-grid card-grid--4">
+      <% events.forEach(event => { %>
+        <%- include('../partials/event-card', { event }) %>
+      <% }) %>
+    </div>
+  <% } %>
+</div>
+

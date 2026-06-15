@@ -1,0 +1,146 @@
+<div class="container container--narrow">
+  <!-- Back link -->
+  <a href="/events" class="back-link">← All Events</a>
+
+  <div class="event-detail">
+    <!-- Header -->
+    <div class="event-detail__header">
+      <div class="event-detail__badges">
+        <span class="badge badge--<%= event.category %>"><%= event.category %></span>
+        <% if (event.is_cancelled) { %>
+          <span class="badge badge--cancelled">Cancelled</span>
+        <% } %>
+        <% if (spotsLeft <= 0 && !event.is_cancelled) { %>
+          <span class="badge badge--full">Sold Out</span>
+        <% } else if (spotsLeft <= 10 && !event.is_cancelled) { %>
+          <span class="badge badge--warning">Only <%= spotsLeft %> left</span>
+        <% } %>
+      </div>
+      <h1 class="event-detail__title"><%= event.title %></h1>
+      <p class="event-detail__organizer">by <strong><%= event.organizer %></strong></p>
+    </div>
+
+    <!-- Info grid -->
+    <div class="info-grid">
+      <div class="info-item">
+        <span class="info-item__label">Date & Time</span>
+        <span class="info-item__value">
+          <%= new Date(event.event_date).toLocaleDateString('en-GB', { weekday:'long', day:'numeric', month:'long', year:'numeric' }) %>
+          at <%= new Date(event.event_date).toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit' }) %>
+        </span>
+      </div>
+      <div class="info-item">
+        <span class="info-item__label">Location</span>
+        <span class="info-item__value"><%= event.location %></span>
+      </div>
+      <div class="info-item">
+        <span class="info-item__label">Price</span>
+        <span class="info-item__value info-item__value--price">
+          <%= Number(event.price) === 0 ? 'Free' : `€${Number(event.price).toFixed(2)} / ticket` %>
+        </span>
+      </div>
+      <div class="info-item">
+        <span class="info-item__label">Availability</span>
+        <span class="info-item__value">
+          <%= event.tickets_sold %> / <%= event.capacity %> registered
+          (<%= spotsLeft > 0 ? spotsLeft + ' spots left' : 'Sold out' %>)
+        </span>
+      </div>
+    </div>
+
+    <!-- Capacity bar -->
+    <div class="capacity-bar">
+      <div class="capacity-bar__fill" style="width: <%= Math.min(100, (event.tickets_sold / event.capacity) * 100) %>%"></div>
+    </div>
+
+    <!-- Description -->
+    <% if (event.description) { %>
+      <div class="event-detail__description">
+        <h2 class="section-heading">About this event</h2>
+        <p><%= event.description %></p>
+      </div>
+    <% } %>
+
+    <!-- Actions -->
+    <div class="event-detail__actions">
+      <a href="/events/<%= event.id %>/edit" class="btn btn--ghost">Edit Event</a>
+      <form action="/events/<%= event.id %>?_method=DELETE" method="POST"
+            onsubmit="return confirm('Cancel this event? All registrations will be notified.')">
+        <button type="submit" class="btn btn--danger">Cancel Event</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Registration form -->
+  <% if (!event.is_cancelled && spotsLeft > 0) { %>
+  <div class="register-box">
+    <h2 class="register-box__title">Reserve Your Spot</h2>
+    <form action="/registrations" method="POST" class="form" novalidate>
+      <input type="hidden" name="event_id" value="<%= event.id %>" />
+      <div class="form__row">
+        <div class="form__group">
+          <label class="label" for="attendee_name">Full Name</label>
+          <input type="text" id="attendee_name" name="attendee_name" class="input" required placeholder="Jane Smith" />
+        </div>
+        <div class="form__group">
+          <label class="label" for="attendee_email">Email</label>
+          <input type="email" id="attendee_email" name="attendee_email" class="input" required placeholder="jane@example.com" />
+        </div>
+      </div>
+      <div class="form__row">
+        <div class="form__group">
+          <label class="label" for="attendee_phone">Phone <span class="label__opt">(optional)</span></label>
+          <input type="tel" id="attendee_phone" name="attendee_phone" class="input" placeholder="+40 700 000 000" />
+        </div>
+        <div class="form__group">
+          <label class="label" for="ticket_count">Tickets</label>
+          <select id="ticket_count" name="ticket_count" class="select">
+            <% for (let i = 1; i <= Math.min(10, spotsLeft); i++) { %>
+              <option value="<%= i %>"><%= i %></option>
+            <% } %>
+          </select>
+        </div>
+      </div>
+      <div class="form__group">
+        <label class="label" for="notes">Notes <span class="label__opt">(optional)</span></label>
+        <textarea id="notes" name="notes" class="input input--textarea" rows="3" placeholder="Dietary requirements, accessibility needs…"></textarea>
+      </div>
+      <button type="submit" class="btn btn--primary btn--full">Confirm Registration</button>
+    </form>
+  </div>
+  <% } else if (event.is_cancelled) { %>
+    <div class="notice notice--cancelled">This event has been cancelled.</div>
+  <% } else { %>
+    <div class="notice notice--full">This event is sold out. Check back later for cancellations.</div>
+  <% } %>
+
+  <!-- Registrations list (admin view) -->
+  <% if (registrations.length > 0) { %>
+  <div class="registrations-table-wrap">
+    <h2 class="section-heading">Registered Attendees (<%= registrations.length %>)</h2>
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Tickets</th>
+          <th>Status</th>
+          <th>Registered</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% registrations.forEach(r => { %>
+        <tr class="<%= r.status === 'cancelled' ? 'table__row--muted' : '' %>">
+          <td><%= r.attendee_name %></td>
+          <td><%= r.attendee_email %></td>
+          <td><%= r.ticket_count %></td>
+          <td><span class="badge badge--<%= r.status %>"><%= r.status %></span></td>
+          <td><%= new Date(r.registered_at).toLocaleDateString('en-GB') %></td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+  <% } %>
+</div>
+
