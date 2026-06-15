@@ -1,0 +1,13 @@
+<nav class="nav">
+  <div class="nav__inner">
+    <a href="/" class="nav__logo">
+      <span class="nav__logo-icon">◈</span>
+      EventHub
+    </a>
+    <div class="nav__links">
+      <a href="/events" class="nav__link <%= currentPath.startsWith('/events') ? 'nav__link--active' : '' %>">Browse</a>
+      <a href="/registrations" class="nav__link <%= currentPath.startsWith('/registrations') ? 'nav__link--active' : '' %>">My Bookings</a>
+      <a href="/events/new" class="btn btn--sm btn--primary">+ Create Event</a>
+    </div>
+  </div>
+</nav>
